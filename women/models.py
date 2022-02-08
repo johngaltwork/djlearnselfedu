@@ -22,7 +22,7 @@ class Women(models.Model):
     class Meta:
         verbose_name = 'Известные женщины' # меняет название приложения в админ панели
         verbose_name_plural = 'Известные женщины' # убирает букву 's' в названии приложение, множественное число
-        ordering = ['-time_create', 'title'] # сортировка записей в админ панели
+        ordering = ['id'] # сортировка записей в админ панели
 
 
 class Category(models.Model):
