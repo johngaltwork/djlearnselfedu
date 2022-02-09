@@ -1,4 +1,5 @@
 from django.urls import path, re_path
+from django.views.decorators.cache import cache_page  #декоратор для кеширования представлений
 
 from .views import *
 

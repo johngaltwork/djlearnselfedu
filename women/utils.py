@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django.core.cache import cache
 
 from .models import *
 
@@ -13,7 +14,11 @@ class DataMixin:
 
     def get_user_context(self, **kwargs):
         context = kwargs
-        cats = Category.objects.annotate(Count('women'))
+        cats = cache.get('cats')  # берем данные из кеша
+        if not cats:  # если данных в кеше нет,
+            cats = Category.objects.annotate(Count('women'))  # то выполняем SQL запрос к базе
+            cache.set('cats', cats, 60)  # сохраняем данные в кеш на 60 секунд
+
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
                 user_menu.pop(1)
