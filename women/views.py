@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -80,8 +80,24 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
 #     return render(request, 'women/addpage.html', {'form': form, 'menu': menu, 'title': 'Добавление статьи'})
 
 
-def contact(request):
-    return HttpResponse('Обратная связь')
+# def contact(request):
+#     return HttpResponse('Обратная связь')
+
+class ContactFormView(DataMixin, FormView):  # класс представления для формы обратной связи
+    form_class = ContactForm  # ссылка на класс в файле forms.py
+    template_name = 'women/contact.html'  # ссылка на шаблон
+    success_url = reverse_lazy('home')  # перенаправление на url адрес при успешной отправке формы
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        '''Метод для формирования контекста для шаблона отображения'''
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Обратная связь')
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def form_valid(self, form):
+        '''Метод вызывается, если пользователь пользователь верно заполнил все поля контатной формы ContactForm'''
+        print(form.cleaned_data)
+        return redirect('home')
 
 
 # def login(request):
